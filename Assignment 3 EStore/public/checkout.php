@@ -1,14 +1,18 @@
 <?php
 session_start();
+require_once __DIR__ . '/../db/setup_db.php';        
+require_once __DIR__ . '/../src/Repository/ProductRepository.php';
 
-/* very lightweight “field check then success” */
+/* 1️⃣ Fake payment validation */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $ok = $_POST['cc']      && preg_match('/^\d{16}$/', $_POST['cc']) &&
-          $_POST['exp']     && preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $_POST['exp']) &&
-          $_POST['cvv']     && preg_match('/^\d{3}$/',  $_POST['cvv']) &&
-          $_POST['name'];
+    $ok =
+        !empty($_POST['cc'])  && preg_match('/^\d{16}$/',  $_POST['cc'])  &&
+        !empty($_POST['exp']) && preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $_POST['exp']) &&
+        !empty($_POST['cvv']) && preg_match('/^\d{3}$/',   $_POST['cvv']) &&
+        !empty($_POST['name']);
+
     if ($ok) {
-        $_SESSION['cart'] = [];  // clear cart
+        $_SESSION['cart'] = [];  
         $msg = '✅ Payment accepted (simulated). Thank you!';
     } else {
         $msg = '❌ Please correct the highlighted fields.';
@@ -16,33 +20,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Checkout</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
-</head><body><div class="container">
-<h2>Fake Payment</h2>
-<?php if (isset($msg)) echo "<p>$msg</p>"; ?>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Checkout</title>
+  <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
+</head>
+<body>
+<div class="container">
 
-<form method="post">
-  <label>Cardholder Name
-    <input type="text" name="name" required value="<?= $_POST['name'] ?? '' ?>">
-  </label>
-  <label>Card Number (16 digits)
-    <input type="text" name="cc" pattern="\d{16}" required value="<?= $_POST['cc'] ?? '' ?>">
-  </label>
-  <div class="row">
-    <div class="column">
-      <label>Expiry MM/YY
-        <input type="text" name="exp" pattern="(0[1-9]|1[0-2])/\d{2}" required placeholder="07/27" value="<?= $_POST['exp'] ?? '' ?>">
-      </label>
-    </div>
-    <div class="column">
-      <label>CVV
-        <input type="text" name="cvv" pattern="\d{3}" required value="<?= $_POST['cvv'] ?? '' ?>">
-      </label>
-    </div>
-  </div>
-  <input class="button-primary" type="submit" value="Pay Now">
-</form>
+  <!-- Navigation Bar -->
+  <nav>
+    <a href="/public/index.php">Shop</a> |
+    <a href="/public/cart.php">Cart (<?= array_sum($_SESSION['cart'] ?? []) ?>)</a>
+    <?php if (!empty($_SESSION['is_admin'])): ?>
+      | <a href="/public/admin.php">Admin</a>
+      | <a href="/public/stats.php">Stats</a>
+    <?php endif; ?>
+  </nav>
 
-<p><a href="cart.php">← Back to cart</a></p>
-</div></body></html>
+  <h2>Checkout (Fake Payment)</h2>
+
+  <?php if (isset($msg)): ?>
+    <p><?= htmlspecialchars($msg) ?></p>
+  <?php endif; ?>
+
+  <form method="post">
+    <label>Cardholder Name
+      <input type="text" name="name" required
+             value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+    </label>
+
+    <label>Card Number (16 digits)
+      <input type="text" name="cc" pattern="\d{16}" required
+             value="<?= htmlspecialchars($_POST['cc'] ?? '') ?>">
+    </label>
+
+    <div class="row">
+      <div class="column">
+        <label>Expiry MM/YY
+          <input type="text" name="exp"
+                 pattern="(0[1-9]|1[0-2])/\d{2}" required
+                 placeholder="07/27"
+                 value="<?= htmlspecialchars($_POST['exp'] ?? '') ?>">
+        </label>
+      </div>
+      <div class="column">
+        <label>CVV
+          <input type="text" name="cvv" pattern="\d{3}" required
+                 value="<?= htmlspecialchars($_POST['cvv'] ?? '') ?>">
+        </label>
+      </div>
+    </div>
+
+    <input class="button-primary" type="submit" value="Pay Now">
+  </form>
+
+  <p><a href="cart.php">← Back to Cart</a></p>
+</div>
+</body>
+</html>
