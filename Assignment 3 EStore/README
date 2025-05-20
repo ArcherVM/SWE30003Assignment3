@@ -1,0 +1,29 @@
+This repo contains our implementation-phase deliverable for Assignment 3.It’s intentionally lightweight so tutors can spin it up in under two minutes on any machine with PHP ≥ 8.0.
+
+1. Folder Guide:
+online-estore-impl/
+├─ db/
+│  ├─ estore.db          ← auto‑created SQLite database
+│  └─ setup_db.php       ← builds schema + seed rows
+├─ public/               ← document root for localhost
+│  ├─ index.php          ← product list + “Add to Cart”
+│  ├─ cart.php           ← view / edit cart
+│  └─ checkout.php       ← fake payment form (field validation only)
+├─ src/
+│  └─ Repository/
+│      └─ ProductRepository.php
+├─ tests/                ← optional CLI smoke tests
+└─ README.md             ← you are here
+
+2. Quick start (Local):
+# clone the repo
+git clone <repo-url> online-estore-impl
+cd online-estore-impl
+
+# 1️⃣  build the database
+php db/setup_db.php
+# → ✅  SQLite database ready at db/estore.db
+
+# 2️⃣  launch the app
+php -S localhost:8080 -t public
+# browse to http://localhost:8080
