@@ -24,5 +24,5 @@ php db/setup_db.php
 # → ✅  SQLite database ready at db/estore.db
 
 # 2️⃣  launch the app
-php -S localhost:8080
+php -S localhost:8080 -t public
 # browse to http://localhost:8080/public/index.php
