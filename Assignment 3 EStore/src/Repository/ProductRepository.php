@@ -14,10 +14,10 @@ class ProductRepository
         $this->db = $db;
     }
 
-    /** @return array<int, array{product_id:int,sku:string,name:string,description:?string,price_cents:int,stock_qty:int}> */
+    /** @return array<int, array{product_id:int,sku:string,name:string,description:?string,price_cents:int,stock_qty:int,img_source:string}> */
     public function all(): array
     {
-        $sql = 'SELECT product_id, sku, name, description, price_cents, stock_qty
+        $sql = 'SELECT product_id, sku, name, description, price_cents, stock_qty, img_source
                   FROM product
               ORDER BY name';
 

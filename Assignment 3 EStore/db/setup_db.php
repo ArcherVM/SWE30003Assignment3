@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS product (
   name VARCHAR(255) NOT NULL,
   description TEXT,
   price_cents INT NOT NULL,
-  stock_qty INT NOT NULL
+  stock_qty INT NOT NULL,
+  img_source VARCHAR(64) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS cart_item (
