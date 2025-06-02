@@ -41,13 +41,13 @@ class ProductRepository
 
     /** Insert a new product. Returns TRUE on success. */
     public function create(string $sku, string $name, string $desc,
-                           int $priceCents, int $stockQty): bool
+                           int $priceCents, int $stockQty, string $imgSource): bool
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO product (sku, name, description, price_cents, stock_qty)
-                       VALUES (?,?,?,?,?)'
+            'INSERT INTO product (sku, name, description, price_cents, stock_qty, img_source)
+                       VALUES (?,?,?,?,?,?)'
         );
-        $stmt->bind_param('sssii', $sku, $name, $desc, $priceCents, $stockQty);
+        $stmt->bind_param('sssiis', $sku, $name, $desc, $priceCents, $stockQty, $imgSource);
         $ok = $stmt->execute();
         $stmt->close();
         return $ok;
@@ -55,14 +55,14 @@ class ProductRepository
 
     /** Update an existing record. Returns TRUE if at least one row changed. */
     public function update(int $id, string $sku, string $name, string $desc,
-                           int $priceCents, int $stockQty): bool
+                           int $priceCents, int $stockQty, string $imgSource): bool
     {
         $stmt = $this->db->prepare(
             'UPDATE product
-                SET sku=?, name=?, description=?, price_cents=?, stock_qty=?
+                SET sku=?, name=?, description=?, price_cents=?, stock_qty=?, img_source=?
               WHERE product_id=?'
         );
-        $stmt->bind_param('sssiii', $sku, $name, $desc, $priceCents, $stockQty, $id);
+        $stmt->bind_param('sssiiis', $sku, $name, $desc, $priceCents, $stockQty, $id, $imgSource);
         $stmt->execute();
         $affected = $stmt->affected_rows;
         $stmt->close();
